@@ -29,11 +29,11 @@ function Gameboard() {
     const getBoard = () => board
 
     const putValue = (row, column, player) => {
-        if (board[row][column] !== " ") {
+        if (board[row][column].getValue() !== " ") {
             console.log("invalid move")
             return
         }
-        board[row][column] = player.getValue()
+        board[row][column].getNewValue(player)
     }
 
     const printBoard = () => {
@@ -44,5 +44,56 @@ function Gameboard() {
     return { getBoard, putValue, printBoard }
 }
 
-const game = Gameboard()
+// create GameController object which will take the Gameboard object,
+// create an array which will have two players' object with name & value,
+// a method to get active player
+// a method to switch active player
+// a method to print new round
+// a method to play the round
+
+function GameController(
+    playerOneName = "Player One",
+    playerTwoName = "Player Two"
+) {
+    const board = Gameboard()
+    const players = [
+        {
+            name: playerOneName,
+            value: "O"
+        },
+        {
+            name: playerTwoName,
+            value: "X"
+        }
+    ];
+
+    let activePlayer = players[0];
+
+    const switchActivePlayer = () => activePlayer = activePlayer === players[0] ? players[1] : players[0];
+
+    const getActivePlayer = () => activePlayer;
+
+    const printNewRound = () => {
+        board.printBoard()
+        console.log(`${getActivePlayer().name}'s turn.`)
+    }
+
+    const playRound = (row, column) => {
+        console.log(`${getActivePlayer().name} putitng value in row ${row} & column ${column}...`)
+
+        board.putValue(row, column, getActivePlayer().value)
+
+        switchActivePlayer()
+
+        printNewRound()
+    }
+
+    printNewRound()
+
+    return { playRound }
+}
+
+let x = GameController()
+
+
 
