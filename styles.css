@@ -1,0 +1,35 @@
+body{
+    color: white;
+    background-color: black;
+    padding: 0;
+    box-sizing: border-box;
+    margin: 0;
+    min-height: 100vh;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.board {
+    display: grid;
+    height: 500px;
+    width: 500px;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border: 1px solid white;
+    background-color: white(0, 0, 0);
+  }
+  
+  .cell {
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    font-size: 4rem;
+    font-weight: bold;
+    cursor: pointer;
+    background-color: black;
+    border: solid 2px white;
+  }
