@@ -41,10 +41,62 @@ function Gameboard() {
         console.log(boardWithCellValues)
     }
 
-    return { getBoard, putValue, printBoard }
+    const checkWin = (name) => {
+        for (let i = 0; i < row; i++) {
+            if (
+                board[i][0].getValue() !== " " &&
+                board[i][0].getValue() === board[i][1].getValue() &&
+                board[i][1].getValue() === board[i][2].getValue()
+            ) {
+
+                return `${name} won`
+            }
+        }
+
+        for (let i = 0; i < column; i++) {
+            if (
+                board[0][i].getValue() !== " " &&
+                board[0][i].getValue() === board[1][i].getValue() &&
+                board[1][i].getValue() === board[2][i].getValue()
+            ) {
+                return `${name} won`
+
+            }
+        }
+
+        if (
+            board[0][0].getValue() !== " " &&
+            board[0][0].getValue() === board[1][1].getValue() &&
+            board[1][1].getValue() === board[2][2].getValue() ||
+
+            board[0][2].getValue() !== " " &&
+            board[0][2].getValue() === board[1][1].getValue() &&
+            board[1][1].getValue() === board[2][0].getValue()
+        ) {
+            return `${name} won`
+        }
+
+        let boardFilled = true
+
+        for (let i = 0; i < row; i++) {
+            for (let j = 0; j < column; j++) {
+                if (board[i][j].getValue() === " ") {
+                    boardFilled = false
+                }
+            }
+        }
+
+        if (boardFilled) {
+            return "It's a Tie!"
+        }
+
+        return false
+    }
+
+    return { getBoard, putValue, printBoard, checkWin }
 }
 
-// create GameController object which will take the Gameboard object,
+// create GameController object which will take the GameBoard object,
 // create an array which will have two players' object with name & value,
 // a method to get active player
 // a method to switch active player
@@ -78,25 +130,35 @@ function GameController(
         console.log(`${getActivePlayer().name}'s turn.`)
     }
 
+    let winner;
+
     const playRound = (row, column) => {
-        console.log(`${getActivePlayer().name} putitng value in row ${row} & column ${column}...`)
+        console.log(`${getActivePlayer().name} putting value in row ${row} & column ${column}...`)
 
         board.putValue(row, column, getActivePlayer().value)
 
-        switchActivePlayer()
+        winner = board.checkWin(getActivePlayer().name)
 
-        printNewRound()
+        console.log(winner)
+
+        if (!winner) {
+            switchActivePlayer()
+            printNewRound()
+        }
+
     }
+    const getWinner = () => winner
 
     printNewRound()
 
-    return { playRound, getActivePlayer, getBoard: board.getBoard }
+    return { playRound, getActivePlayer, getBoard: board.getBoard, getWinner }
 }
 
-function ScreenController(){
+function ScreenController() {
     const game = GameController();
     const playerTurnDiv = document.querySelector(".turn")
     const boardDiv = document.querySelector(".board")
+    const result = document.querySelector(".result")
 
     const updateScreen = () => {
         boardDiv.textContent = "";
@@ -105,27 +167,31 @@ function ScreenController(){
 
         playerTurnDiv.textContent = `${activePlayer.name}'s turn...`
 
-        board.forEach((row,rowIndex) => {
-            row.forEach((cell,columnIndex)=>{
+        if (game.getWinner()) {
+            result.textContent = game.getWinner()
+            boardDiv.removeEventListener("click", clickHandlerBoard)
+
+        }
+
+        board.forEach((row, rowIndex) => {
+            row.forEach((cell, columnIndex) => {
                 const cellButton = document.createElement("button")
                 cellButton.classList.add("cell");
 
                 cellButton.dataset.row = rowIndex
                 cellButton.dataset.column = columnIndex
                 cellButton.textContent = cell.getValue()
-
                 boardDiv.appendChild(cellButton)
             })
         })
     }
 
-    function clickHandlerBoard(e){
+    function clickHandlerBoard(e) {
 
-        console.log(e)
         const selectedColumn = e.target.dataset.column
         const selectedRow = e.target.dataset.row
 
-        if(!selectedColumn && !selectedRow) return;
+        if (!selectedColumn && !selectedRow) return;
 
         game.playRound(selectedRow, selectedColumn)
         updateScreen();
@@ -136,8 +202,3 @@ function ScreenController(){
 }
 
 ScreenController()
-
-
-
-
-
