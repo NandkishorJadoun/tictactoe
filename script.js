@@ -1,18 +1,10 @@
-// create Cell object for each square which will contain some value
-
 function Cell() {
     let value = " ";
-
     const getValue = () => value;
-
     const getNewValue = (player) => value = player;
 
     return { getValue, getNewValue }
 }
-
-// create a Gameboard object which will generate the board, 
-// method to give the board, method to put the value in board,
-// method to print the board
 
 function Gameboard() {
     let board = [];
@@ -30,15 +22,10 @@ function Gameboard() {
 
     const putValue = (row, column, player) => {
         if (board[row][column].getValue() !== " ") {
-            console.log("invalid move")
+            alert(`Invalid Move!`)
             return
         }
         board[row][column].getNewValue(player)
-    }
-
-    const printBoard = () => {
-        const boardWithCellValues = board.map(row => row.map(cell => cell.getValue()))
-        console.log(boardWithCellValues)
     }
 
     const checkWin = (name) => {
@@ -48,7 +35,6 @@ function Gameboard() {
                 board[i][0].getValue() === board[i][1].getValue() &&
                 board[i][1].getValue() === board[i][2].getValue()
             ) {
-
                 return `${name} won`
             }
         }
@@ -60,18 +46,17 @@ function Gameboard() {
                 board[1][i].getValue() === board[2][i].getValue()
             ) {
                 return `${name} won`
-
             }
         }
 
         if (
-            board[0][0].getValue() !== " " &&
+            (board[0][0].getValue() !== " " &&
             board[0][0].getValue() === board[1][1].getValue() &&
-            board[1][1].getValue() === board[2][2].getValue() ||
-
-            board[0][2].getValue() !== " " &&
+            board[1][1].getValue() === board[2][2].getValue())
+            ||
+            (board[0][2].getValue() !== " " &&
             board[0][2].getValue() === board[1][1].getValue() &&
-            board[1][1].getValue() === board[2][0].getValue()
+            board[1][1].getValue() === board[2][0].getValue())
         ) {
             return `${name} won`
         }
@@ -86,22 +71,13 @@ function Gameboard() {
             }
         }
 
-        if (boardFilled) {
-            return "It's a Tie!"
-        }
-
+        if (boardFilled) return "It's a Tie!"
+        
         return false
     }
-
-    return { getBoard, putValue, printBoard, checkWin }
+    
+    return { getBoard, putValue, checkWin }
 }
-
-// create GameController object which will take the GameBoard object,
-// create an array which will have two players' object with name & value,
-// a method to get active player
-// a method to switch active player
-// a method to print new round
-// a method to play the round
 
 function GameController(
     playerOneName = "Player One",
@@ -125,31 +101,17 @@ function GameController(
 
     const getActivePlayer = () => activePlayer;
 
-    const printNewRound = () => {
-        board.printBoard()
-        console.log(`${getActivePlayer().name}'s turn.`)
-    }
-
     let winner;
 
     const playRound = (row, column) => {
-        console.log(`${getActivePlayer().name} putting value in row ${row} & column ${column}...`)
 
         board.putValue(row, column, getActivePlayer().value)
-
         winner = board.checkWin(getActivePlayer().name)
-
-        console.log(winner)
-
-        if (!winner) {
-            switchActivePlayer()
-            printNewRound()
-        }
+        if (!winner) switchActivePlayer()
 
     }
-    const getWinner = () => winner
 
-    printNewRound()
+    const getWinner = () => winner 
 
     return { playRound, getActivePlayer, getBoard: board.getBoard, getWinner }
 }
@@ -170,7 +132,6 @@ function ScreenController() {
         if (game.getWinner()) {
             result.textContent = game.getWinner()
             boardDiv.removeEventListener("click", clickHandlerBoard)
-
         }
 
         board.forEach((row, rowIndex) => {
